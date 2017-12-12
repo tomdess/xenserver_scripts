@@ -81,13 +81,16 @@ def take_snapshot(uuid, timestamp, name):
 def UUIDbyHostName():
    result = {}
    cmd = "xe host-list"
-   output = commands.getoutput(cmd)
-   for h in output.split("\n\n\n"):
-      lines = h.splitlines()
-      uuid = lines[0].split(":")[1][1:]
-      name = lines[1].split(":")[1][1:]
-      result[name]= uuid
-   return result
+   output = commands.getstatusoutput(cmd)
+   if status == 0:
+      for h in output.split("\n\n\n"):
+         lines = h.splitlines()
+         uuid = lines[0].split(":")[1][1:]
+         name = lines[1].split(":")[1][1:]
+         result[name]= uuid
+      return result
+   else:
+      return None
 
 ## MAIN
 
@@ -106,6 +109,9 @@ def main():
      
    # set a dict for hosts in the pool (by name)
    xhost = UUIDbyHostName()
+   if xhost is None:
+      print "ERROR: retrieving host UUIDs"
+      sys.exit(1)
 
    # get timestamp for snapshot name (es 20171211-1551_s01d0101)
    timestamp = time.strftime("%Y%m%d-%H%M", time.gmtime())
