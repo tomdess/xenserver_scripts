@@ -81,7 +81,7 @@ def take_snapshot(uuid, timestamp, name):
 def UUIDbyHostName():
    result = {}
    cmd = "xe host-list"
-   output = commands.getstatusoutput(cmd)
+   status, output = commands.getstatusoutput(cmd)
    if status == 0:
       for h in output.split("\n\n\n"):
          lines = h.splitlines()
@@ -100,6 +100,7 @@ def main():
                   action="store", type="string",help="take snapshots only on given XEN host (the default is on all hosts in the pool)")
    parser.add_option("--pool-conf-file", dest="poolFile",
                   action="store", type="string",default="/etc/xensource/pool.conf",help="full path of pool.conf file (default /etc/xensource/pool.conf)")
+   parser.add_option("-n", action="store_true", dest="dryRun", default=False,help="dry run - simulate snapshots")
    (options, args) = parser.parse_args()
 
    # if not on master host of the pool exit
@@ -137,12 +138,16 @@ def main():
    
    # go!
    for (uuid, name) in vms:
-      snapUuid=take_snapshot(uuid, timestamp, name)
-      if snapUuid is None:
-         print "ERROR: empty snapshot UUID"
-         sys.exit(1)
+      if not options.dryRun:
+         snapUuid=take_snapshot(uuid, timestamp, name)
+         if snapUuid is None:
+            print "ERROR: empty snapshot UUID"
+            sys.exit(1)
+         else:
+            print "created snapshot %s (UUID=%s) for vm %s" % (timestamp + "_" + name,snapUuid,name)
       else:
-         print "created snapshot %s (UUID=%s) for vm %s" % (timestamp + "_" + name,snapUuid,name)
+         snapUuid="fake-snapshot-uuid-dryrun-only"
+         print "faking snapshot %s (UUID=%s) for vm %s" % (timestamp + "_" + name,snapUuid,name)
       
 
 if __name__ == "__main__":
