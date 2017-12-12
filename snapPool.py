@@ -6,7 +6,7 @@
 # 
 # Consult the help text for more details on functionality.
 #
-# Copyright (C) 2017 Tomaso Dessì
+# Copyright (C) 2017 Tomaso Dessi'
 #
 # License:
 #    This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ def main():
    parser.add_option("--host", dest="xhostname",
                   action="store", type="string",help="take snapshots only on given XEN host (the default is on all hosts in the pool")
    parser.add_option("--pool-conf-file", dest="poolFile",
-                  action="store", type="string",default="/etc/xensource/pool.conf",help="full path of pool.conf file (default /etc/xensource/pool.conf")
+                  action="store", type="string",default="/etc/xensource/pool.conf",help="full path of pool.conf file (default /etc/xensource/pool.conf)")
    (options, args) = parser.parse_args()
 
    # if not on master host of the pool exit
