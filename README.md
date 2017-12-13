@@ -17,4 +17,7 @@ snapPool.py: automated snapshot creation
   --pool-conf-file=POOLFILE
                         full path of pool.conf file (default
                         /etc/xensource/pool.conf)
+  -n                    dry run - simulate snapshots
+  --vm-prefix=VMPREFIX  name-label prefix of vms to include
+  --vm-suffix=VMSUFFIX  name-label suffix of vms to include
 ```
