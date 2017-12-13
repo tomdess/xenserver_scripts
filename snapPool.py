@@ -6,6 +6,8 @@
 # 
 # Consult the help text for more details on functionality.
 #
+# https://github.com/tomdess/xenserver_scripts/
+#
 # Copyright (C) 2017 Tomaso Dessi'
 #
 # License:
@@ -26,6 +28,7 @@
 import commands, time, sys
 from optparse import OptionParser
 
+
 def onMaster(file):
    try:
      poolFile = open(file, 'r')
@@ -42,6 +45,14 @@ def onMaster(file):
       print "Unexpected error:", sys.exc_info()[0]
       raise
 
+def filterVms(vms,prefix,suffix):
+   filteredVms = []
+   for vm in vms:
+       offsetForSuffix = len(vm[1]) - len(suffix)
+       if (vm[1][0:len(prefix)] == prefix) and (vm[1][offsetForSuffix:] == suffix):
+          filteredVms += [vm]
+   return filteredVms
+      
 def getVmsOnPool():
    result = []
    cmd = "xe vm-list is-control-domain=false is-a-snapshot=false is-a-template=false power-state=running"
@@ -101,6 +112,10 @@ def main():
    parser.add_option("--pool-conf-file", dest="poolFile",
                   action="store", type="string",default="/etc/xensource/pool.conf",help="full path of pool.conf file (default /etc/xensource/pool.conf)")
    parser.add_option("-n", action="store_true", dest="dryRun", default=False,help="dry run - simulate snapshots")
+   parser.add_option("--vm-prefix", dest="vmPrefix",
+                  action="store", type="string",default="",help="name-label prefix of vms to include")
+   parser.add_option("--vm-suffix", dest="vmSuffix",
+                  action="store", type="string",default="",help="name-label suffix of vms to include")
    (options, args) = parser.parse_args()
 
    # if not on master host of the pool exit
@@ -135,7 +150,11 @@ def main():
       if vms is None:
           print "ERROR: empty vm list"
           sys.exit(1)
-   
+
+   # if prefix or suffix are defined filter vms list
+   if options.vmPrefix or options.vmSuffix:
+      vms = filterVms(vms,options.vmPrefix,options.vmSuffix)
+
    # go!
    for (uuid, name) in vms:
       if not options.dryRun:
