@@ -1,4 +1,4 @@
-# xenserver_scripts
+# xenserver scripts
 
 snapPool.py: automated snapshot creation
 
