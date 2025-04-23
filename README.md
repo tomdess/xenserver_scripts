@@ -1,5 +1,15 @@
 # xenserver scripts
 
+:warning: **Repository Archived**
+
+This repository has been archived and is no longer actively maintained because the project is no longer being developed.
+It is now read-only; no new issues or pull requests will be merged.
+You can always fork the repository and maintain your own version.
+
+Thank you for your interest in this project!
+
+---
+
 snapPool.py: automated snapshot creation
 
  Takes a snapshot for all VMs in the xenserver pool, must run on master host of the pool
